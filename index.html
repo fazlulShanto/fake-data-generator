@@ -2,31 +2,55 @@
 <html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <link rel="icon" type="image/webp" href="/appLogo.webp" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>JSON Tools - Developer Utilities</title>
+
+    <!-- Primary Meta Tags -->
+    <title>JSON Tools - Developer Utilities & Mock Data Generator</title>
+    <meta
+      name="title"
+      content="JSON Tools - Developer Utilities & Mock Data Generator"
+    />
     <meta
       name="description"
-      content="A comprehensive JSON utility toolkit for developers. Generate mock data with FakerJS, view, validate, repair, format, diff, and convert JSON to TypeScript or Zod schemas."
+      content="A powerful suite of JSON tools for developers. Generate complex nested mock data, validate schemas, formatter, diff checker, repair JSON, and convert to TypeScript/Zod."
     />
     <meta
       name="keywords"
-      content="JSON, tools, FakerJS, validator, formatter, TypeScript, Zod, diff, developer"
+      content="JSON generator, mock data, schema validator, json formatter, json diff, typescript generator, zod schema generator, developer tools, fake data"
     />
     <meta name="author" content="JSON Tools" />
 
-    <!-- Open Graph -->
-    <meta property="og:title" content="JSON Tools - Developer Utilities" />
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://json-tools.app/" />
+    <meta
+      property="og:title"
+      content="JSON Tools - Developer Utilities & Mock Data Generator"
+    />
     <meta
       property="og:description"
-      content="Generate, view, validate, repair, format, diff, and convert JSON with ease."
+      content="Generate complex nested mock data, validate schemas, format, repair, and convert JSON with a modern dark-themed UI."
     />
-    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/appLogo.webp" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://json-tools.app/" />
+    <meta
+      property="twitter:title"
+      content="JSON Tools - Developer Utilities & Mock Data Generator"
+    />
+    <meta
+      property="twitter:description"
+      content="Generate complex nested mock data, validate schemas, format, repair, and convert JSON with a modern dark-themed UI."
+    />
+    <meta property="twitter:image" content="/appLogo.webp" />
 
     <!-- Theme Color -->
     <meta
       name="theme-color"
-      content="#0a0a0a"
+      content="#0d1420"
       media="(prefers-color-scheme: dark)"
     />
     <meta
@@ -34,22 +58,6 @@
       content="#ffffff"
       media="(prefers-color-scheme: light)"
     />
-
-    <!-- Prevent FOUC -->
-    <script>
-      (function () {
-        const theme = localStorage.getItem("json-tools-theme") || "dark";
-        if (theme === "system") {
-          const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
-            .matches
-            ? "dark"
-            : "light";
-          document.documentElement.classList.add(systemTheme);
-        } else {
-          document.documentElement.classList.add(theme);
-        }
-      })();
-    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -1,73 +1,96 @@
-# React + TypeScript + Vite
+# JSON Tools
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A powerful, all-in-one suite of JSON utilities built with React, Vite, and Tailwind CSS. Designed for developers who work with data daily.
 
-Currently, two official plugins are available:
+![JSON Tools Screenshot](https://raw.githubusercontent.com/fazlulShanto/fake-data-generator/main/public/screenshot.png)
+_(Note: You may need to add a screenshot to your repo)_
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🚀 Features
 
-## React Compiler
+### 🛠️ Data Generator
 
-The React Compiler is currently not compatible with SWC. See [this issue](https://github.com/vitejs/vite-plugin-react/issues/428) for tracking the progress.
+- **Visual Schema Builder**: Create complex nested JSON structures using a drag-and-drop interface.
+- **Rich Data Types**: Built on [FakerJS](https://fakerjs.dev/) to generate realistic data (Names, Emails, UUIDs, Dates, etc.).
+- **Nested Support**: Create Objects and Arrays with infinite nesting depth.
+- **Drag & Drop**: Reorder fields effortlessly using `@dnd-kit`.
+- **Export**: Copy to clipboard or download as `.json` file.
 
-## Expanding the ESLint configuration
+### 🔍 JSON Viewer & Editor
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Interactive Tree View**: Explore deep JSON structures with collapsible nodes.
+- **Search**: Value and key search within the tree.
+- **Type Highlighting**: Color-coded values for strings, numbers, booleans, etc.
 
-```js
-export default defineConfig([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
+### ✅ Validators & Fixers
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- **Syntax Validator**: Checks for valid JSON and points out syntax errors with line numbers.
+- **Schema Validator**: Validate JSON data against **JSON Schema (Draft-07)** using `ajv`.
+- **Auto-Repair**: Automatically fix malformed JSON (missing quotes, trailing commas) using `jsonrepair`.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
-```
+### 🔄 Converters & Formatters
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+- **Formatter**: Beautify (indent) or Minify JSON to save space.
+- **Diff Tool**: Compare two JSON objects side-by-side to spot additions, deletions, and changes.
+- **TypeScript Generator**: Instantly generate TypeScript definitions from JSON.
+- **Zod Schema Generator**: Create Zod validation schemas from your data.
 
-```js
-// eslint.config.js
-import reactX from "eslint-plugin-react-x";
-import reactDom from "eslint-plugin-react-dom";
+### 🎨 UI & UX
 
-export default defineConfig([
-  globalIgnores(["dist"]),
-  {
-    files: ["**/*.{ts,tsx}"],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs["recommended-typescript"],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
-```
+- **Modern Design**: Sleek, glassmorphism-inspired UI with a deep navy dark mode.
+- **Theme Support**: Light, Dark, and System modes with persistent preference.
+- **Responsive Layout**: Collapsible sidebar for maximum workspace.
+- **Keyboard Accessible**: Full keyboard navigation support.
+
+## 🛠️ Tech Stack
+
+- **Framework**: [React](https://react.dev/) + [Vite](https://vitejs.dev/)
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
+- **Icons**: [Lucide React](https://lucide.dev/)
+- **State Management**: React Hooks
+- **Drag & Drop**: [@dnd-kit](https://dndkit.com/)
+- **Validation**: [Ajv](https://ajv.js.org/)
+- **Utilities**: `jsonrepair`, `faker`, `clsx`, `tailwind-merge`
+
+## 📦 Installation
+
+1. **Clone the repository**
+
+   ```bash
+   git clone https://github.com/fazlulShanto/fake-data-generator.git
+   cd fake-data-generator
+   ```
+
+2. **Install dependencies**
+
+   ```bash
+   pnpm install
+   # or
+   npm install
+   ```
+
+3. **Start the development server**
+
+   ```bash
+   pnpm dev
+   # or
+   npm run dev
+   ```
+
+4. **Build for production**
+   ```bash
+   pnpm build
+   ```
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the project
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
