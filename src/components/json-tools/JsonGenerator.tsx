@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -24,6 +24,9 @@ import {
   List,
   Hash,
   GripVertical,
+  Share2,
+  Check,
+  AlertTriangle,
 } from "lucide-react";
 import {
   DndContext,
@@ -42,6 +45,12 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import {
+  createShareableUrl,
+  getStateFromUrl,
+  clearUrlState,
+  type ShareableState,
+} from "@/lib/share-state";
 
 type FieldType = "value" | "object" | "array";
 
@@ -612,6 +621,20 @@ export function JsonGenerator() {
   ]);
   const [count, setCount] = useState(5);
   const [output, setOutput] = useState("");
+  const [shareStatus, setShareStatus] = useState<
+    "idle" | "copied" | "too-long"
+  >("idle");
+
+  // Restore schema from URL on mount
+  useEffect(() => {
+    const state = getStateFromUrl();
+    if (state && state.tool === "generator" && state.data) {
+      const data = state.data as { fields: SchemaField[]; count: number };
+      if (data.fields) setFields(data.fields);
+      if (data.count) setCount(data.count);
+      clearUrlState(); // Clean URL after restoring
+    }
+  }, []);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -838,6 +861,26 @@ export function JsonGenerator() {
     URL.revokeObjectURL(url);
   };
 
+  const shareSchema = async () => {
+    const state: ShareableState = {
+      tool: "generator",
+      data: { fields, count },
+      version: 1,
+    };
+    const { url, tooLong } = createShareableUrl(state);
+
+    if (tooLong) {
+      setShareStatus("too-long");
+      // Still copy the URL, but warn the user
+      await navigator.clipboard.writeText(url);
+      setTimeout(() => setShareStatus("idle"), 3000);
+    } else {
+      await navigator.clipboard.writeText(url);
+      setShareStatus("copied");
+      setTimeout(() => setShareStatus("idle"), 2000);
+    }
+  };
+
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 h-full">
       {/* Schema Builder */}
@@ -876,6 +919,28 @@ export function JsonGenerator() {
                 className="h-8 bg-gradient-to-r from-violet-500 to-violet-600 hover:from-violet-600 hover:to-violet-700 shadow-lg shadow-violet-500/25"
               >
                 <Shuffle className="h-3.5 w-3.5 mr-1.5" /> Generate
+              </Button>
+              <Button
+                onClick={shareSchema}
+                size="sm"
+                variant="outline"
+                className={`h-8 ${shareStatus === "copied" ? "border-green-500 text-green-500" : shareStatus === "too-long" ? "border-amber-500 text-amber-500" : ""}`}
+                title="Share schema via URL"
+              >
+                {shareStatus === "copied" ? (
+                  <>
+                    <Check className="h-3.5 w-3.5 mr-1.5" /> Copied!
+                  </>
+                ) : shareStatus === "too-long" ? (
+                  <>
+                    <AlertTriangle className="h-3.5 w-3.5 mr-1.5" /> URL may be
+                    too long
+                  </>
+                ) : (
+                  <>
+                    <Share2 className="h-3.5 w-3.5 mr-1.5" /> Share
+                  </>
+                )}
               </Button>
             </div>
           </div>
