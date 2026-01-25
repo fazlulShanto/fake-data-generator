@@ -28,6 +28,7 @@ import {
   PanelLeft,
   Github,
   FileCheck2,
+  Star,
 } from "lucide-react";
 
 type ToolId =
@@ -272,6 +273,37 @@ export function Layout() {
             </div>
           </nav>
         </ScrollArea>
+
+        {/* GitHub Star Card */}
+        {!sidebarCollapsed && (
+          <div className="p-3 border-t bg-card/30 mt-auto">
+            <div className="bg-gradient-to-br from-violet-500/10 to-indigo-500/10 border border-violet-500/20 rounded-xl p-3">
+              <div className="flex items-center gap-3 mb-3">
+                <div className="p-2 rounded-lg bg-background/80 shadow-sm ring-1 ring-border/50 shrink-0">
+                  <Github className="h-4 w-4" />
+                </div>
+                <div className="min-w-0">
+                  <p className="text-xs font-semibold truncate">Open Source</p>
+                  <p className="text-[10px] text-muted-foreground truncate">
+                    Star us on GitHub
+                  </p>
+                </div>
+              </div>
+              <Button
+                size="sm"
+                className="w-full h-8 text-xs bg-gradient-to-r from-violet-600 to-indigo-600 hover:from-violet-700 hover:to-indigo-700 shadow-lg shadow-violet-500/20 border-0"
+                onClick={() =>
+                  window.open(
+                    "https://github.com/fazlulShanto/fake-data-generator",
+                    "_blank",
+                  )
+                }
+              >
+                <Star className="h-3.5 w-3.5 mr-1.5 fill-white/20" /> Star Repo
+              </Button>
+            </div>
+          </div>
+        )}
       </aside>
 
       {/* Main Content */}
