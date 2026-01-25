@@ -1,10 +1,55 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>fake-data</title>
+    <title>JSON Tools - Developer Utilities</title>
+    <meta
+      name="description"
+      content="A comprehensive JSON utility toolkit for developers. Generate mock data with FakerJS, view, validate, repair, format, diff, and convert JSON to TypeScript or Zod schemas."
+    />
+    <meta
+      name="keywords"
+      content="JSON, tools, FakerJS, validator, formatter, TypeScript, Zod, diff, developer"
+    />
+    <meta name="author" content="JSON Tools" />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="JSON Tools - Developer Utilities" />
+    <meta
+      property="og:description"
+      content="Generate, view, validate, repair, format, diff, and convert JSON with ease."
+    />
+    <meta property="og:type" content="website" />
+
+    <!-- Theme Color -->
+    <meta
+      name="theme-color"
+      content="#0a0a0a"
+      media="(prefers-color-scheme: dark)"
+    />
+    <meta
+      name="theme-color"
+      content="#ffffff"
+      media="(prefers-color-scheme: light)"
+    />
+
+    <!-- Prevent FOUC -->
+    <script>
+      (function () {
+        const theme = localStorage.getItem("json-tools-theme") || "dark";
+        if (theme === "system") {
+          const systemTheme = window.matchMedia("(prefers-color-scheme: dark)")
+            .matches
+            ? "dark"
+            : "light";
+          document.documentElement.classList.add(systemTheme);
+        } else {
+          document.documentElement.classList.add(theme);
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

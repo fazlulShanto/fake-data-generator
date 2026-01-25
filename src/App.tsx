@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { ThemeProvider } from "@/components/ThemeProvider";
+import { Layout } from "@/components/Layout";
 
 function App() {
   return (
-    <main>
-      <h1>Welcome to the code</h1>
-    </main>
+    <ThemeProvider defaultTheme="dark" storageKey="json-tools-theme">
+      <Layout />
+    </ThemeProvider>
   );
 }
 
