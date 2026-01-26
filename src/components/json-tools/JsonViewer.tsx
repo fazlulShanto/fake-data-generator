@@ -1,19 +1,27 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ChevronRight, ChevronDown, Copy, Upload, Search } from "lucide-react";
+import { ChevronRight, ChevronDown, Copy, Upload, Search, ChevronsDownUp, ChevronsUpDown } from "lucide-react";
 
 interface TreeNodeProps {
   keyName: string | number;
   value: unknown;
   depth: number;
   searchTerm: string;
+  expandAll: boolean | null; // null = user control, true = expand all, false = collapse all
 }
 
-function TreeNode({ keyName, value, depth, searchTerm }: TreeNodeProps) {
+function TreeNode({ keyName, value, depth, searchTerm, expandAll }: TreeNodeProps) {
   const [isExpanded, setIsExpanded] = useState(depth < 2);
+
+  // Respond to expand/collapse all commands
+  useEffect(() => {
+    if (expandAll !== null) {
+      setIsExpanded(expandAll);
+    }
+  }, [expandAll]);
 
   const isObject = value !== null && typeof value === "object";
   const isArray = Array.isArray(value);
@@ -41,7 +49,7 @@ function TreeNode({ keyName, value, depth, searchTerm }: TreeNodeProps) {
   return (
     <div className="font-mono text-xs" style={{ marginLeft: depth * 12 }}>
       <div
-        className={`flex items-center gap-1 py-0.5 hover:bg-muted/50 rounded cursor-pointer ${matchesSearch ? "bg-yellow-500/20" : ""}`}
+        className={`flex items-center gap-1 py-0.5 hover:bg-muted/50 rounded cursor-pointer ${matchesSearch ? "bg-yellow-500/20 ring-1 ring-yellow-500/50" : ""}`}
         onClick={() => isObject && setIsExpanded(!isExpanded)}
       >
         {isObject ? (
@@ -76,6 +84,7 @@ function TreeNode({ keyName, value, depth, searchTerm }: TreeNodeProps) {
               value={v}
               depth={depth + 1}
               searchTerm={searchTerm}
+              expandAll={expandAll}
             />
           ))}
         </div>
@@ -88,6 +97,8 @@ export function JsonViewer() {
   const [input, setInput] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [error, setError] = useState<string | null>(null);
+  const [expandAll, setExpandAll] = useState<boolean | null>(null);
+  const [expandKey, setExpandKey] = useState(0); // Used to trigger re-render on expand/collapse all
 
   const parsedJson = useMemo(() => {
     if (!input.trim()) return null;
@@ -99,6 +110,50 @@ export function JsonViewer() {
       return null;
     }
   }, [input]);
+
+  // Count search results by traversing the entire JSON tree
+  const searchResultCount = useMemo(() => {
+    if (!searchTerm || !parsedJson) return 0;
+    
+    let count = 0;
+    const searchLower = searchTerm.toLowerCase();
+    
+    const countMatches = (obj: unknown, keyName: string | number = "root") => {
+      // Check if key matches
+      if (String(keyName).toLowerCase().includes(searchLower)) {
+        count++;
+      }
+      
+      if (obj !== null && typeof obj === "object") {
+        // For objects/arrays, recurse into children
+        Object.entries(obj as object).forEach(([k, v]) => {
+          countMatches(v, Array.isArray(obj) ? parseInt(k) : k);
+        });
+      } else {
+        // For primitives, check if value matches
+        if (String(obj).toLowerCase().includes(searchLower)) {
+          count++;
+        }
+      }
+    };
+    
+    countMatches(parsedJson);
+    return count;
+  }, [searchTerm, parsedJson]);
+
+  const handleExpandAll = () => {
+    setExpandAll(true);
+    setExpandKey(prev => prev + 1);
+    // Reset to null after a brief moment to allow manual toggling again
+    setTimeout(() => setExpandAll(null), 100);
+  };
+
+  const handleCollapseAll = () => {
+    setExpandAll(false);
+    setExpandKey(prev => prev + 1);
+    // Reset to null after a brief moment to allow manual toggling again
+    setTimeout(() => setExpandAll(null), 100);
+  };
 
   const copyToClipboard = () => {
     if (parsedJson) {
@@ -144,14 +199,42 @@ export function JsonViewer() {
           <div className="flex items-center justify-between gap-2">
             <CardTitle className="text-sm">Tree View</CardTitle>
             <div className="flex items-center gap-1">
+              {/* Expand/Collapse All buttons */}
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleExpandAll}
+                disabled={!parsedJson}
+                className="h-7 w-7"
+                title="Expand All"
+              >
+                <ChevronsUpDown className="h-3 w-3" />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={handleCollapseAll}
+                disabled={!parsedJson}
+                className="h-7 w-7"
+                title="Collapse All"
+              >
+                <ChevronsDownUp className="h-3 w-3" />
+              </Button>
+              <div className="w-px h-5 bg-border mx-1" />
+              {/* Search with result count */}
               <div className="relative">
                 <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
                 <Input
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Search..."
-                  className="pl-7 h-7 w-28 text-xs"
+                  placeholder="Search keys & values..."
+                  className={`pl-7 pr-12 h-7 w-44 text-xs ${searchTerm && searchResultCount === 0 ? "border-destructive" : searchTerm && searchResultCount > 0 ? "border-green-500" : ""}`}
                 />
+                {searchTerm && (
+                  <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium px-1.5 py-0.5 rounded ${searchResultCount > 0 ? "bg-green-500/20 text-green-500" : "bg-destructive/20 text-destructive"}`}>
+                    {searchResultCount}
+                  </span>
+                )}
               </div>
               <Button
                 variant="ghost"
@@ -159,6 +242,7 @@ export function JsonViewer() {
                 onClick={copyToClipboard}
                 disabled={!parsedJson}
                 className="h-7 w-7"
+                title="Copy JSON"
               >
                 <Copy className="h-3 w-3" />
               </Button>
@@ -174,10 +258,12 @@ export function JsonViewer() {
           ) : parsedJson ? (
             <div className="p-1 bg-muted/30 rounded">
               <TreeNode
+                key={expandKey}
                 keyName="root"
                 value={parsedJson}
                 depth={0}
                 searchTerm={searchTerm}
+                expandAll={expandAll}
               />
             </div>
           ) : (

@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
@@ -137,9 +138,12 @@ const tools: ToolItem[] = [
 ];
 
 export function Layout() {
-  const [activeTool, setActiveTool] = useState<ToolId>("generator");
+  const { toolId } = useParams<{ toolId: string }>();
+  const navigate = useNavigate();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
+  // Default to generator if no toolId or invalid toolId
+  const activeTool = (toolId as ToolId) || "generator";
   const currentTool = tools.find((t) => t.id === activeTool);
 
   const toolsByCategory = {
@@ -197,7 +201,7 @@ export function Layout() {
                   variant={activeTool === tool.id ? "secondary" : "ghost"}
                   size="sm"
                   className={`h-8 ${sidebarCollapsed ? "justify-center px-0 w-10 mx-auto" : "justify-start px-2 w-full"} group`}
-                  onClick={() => setActiveTool(tool.id)}
+                  onClick={() => navigate(`/${tool.id}`)}
                   title={sidebarCollapsed ? tool.name : undefined}
                 >
                   <span
@@ -227,7 +231,7 @@ export function Layout() {
                   variant={activeTool === tool.id ? "secondary" : "ghost"}
                   size="sm"
                   className={`h-8 ${sidebarCollapsed ? "justify-center px-0 w-10 mx-auto" : "justify-start px-2 w-full"} group`}
-                  onClick={() => setActiveTool(tool.id)}
+                  onClick={() => navigate(`/${tool.id}`)}
                   title={sidebarCollapsed ? tool.name : undefined}
                 >
                   <span
@@ -257,7 +261,7 @@ export function Layout() {
                   variant={activeTool === tool.id ? "secondary" : "ghost"}
                   size="sm"
                   className={`h-8 ${sidebarCollapsed ? "justify-center px-0 w-10 mx-auto" : "justify-start px-2 w-full"} group`}
-                  onClick={() => setActiveTool(tool.id)}
+                  onClick={() => navigate(`/${tool.id}`)}
                   title={sidebarCollapsed ? tool.name : undefined}
                 >
                   <span
