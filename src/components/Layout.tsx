@@ -30,7 +30,9 @@ import {
   Github,
   FileCheck2,
   Star,
+  Table,
 } from "lucide-react";
+import { JsonTable } from "./jsonTable";
 
 type ToolId =
   | "generator"
@@ -41,6 +43,7 @@ type ToolId =
   | "formatter"
   | "diff"
   | "typescript"
+  | "jsonTable"
   | "zod";
 
 interface ToolItem {
@@ -133,6 +136,15 @@ const tools: ToolItem[] = [
     icon: <Shield className="h-4 w-4" />,
     component: <JsonToZod />,
     category: "convert",
+    color: "text-purple-500",
+  },
+  {
+    id: "jsonTable",
+    name: "JSON Table",
+    description: "Generate Table from JSON",
+    icon: <Table className="h-4 w-4" />,
+    component: <JsonTable />,
+    category: "view",
     color: "text-purple-500",
   },
 ];
