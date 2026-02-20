@@ -3,6 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  ResizablePanelGroup,
+  ResizablePanel,
+  ResizableHandle,
+} from "@/components/ui/resizable";
 import { jsonToTypeScript } from "@/lib/json-converters";
 import { Copy, Upload, FileType } from "lucide-react";
 
@@ -54,64 +59,73 @@ export function JsonToTypescript() {
       </div>
 
       {/* Panels */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 flex-1 min-h-0">
-        <Card className="flex flex-col overflow-hidden">
-          <CardHeader className="py-2 px-3 border-b shrink-0">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-sm">JSON</CardTitle>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handlePaste}
-                className="h-7"
-              >
-                <Upload className="h-3 w-3 mr-1" /> Paste
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent className="flex-1 p-0 overflow-hidden">
-            <Textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              className="h-full w-full font-mono text-xs border-0 rounded-none resize-none focus-visible:ring-0"
-              placeholder='{"id": 1, "name": "John"}'
-            />
-          </CardContent>
-        </Card>
-
-        <Card className="flex flex-col overflow-hidden">
-          <CardHeader className="py-2 px-3 border-b shrink-0">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-sm">TypeScript</CardTitle>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={copyToClipboard}
-                disabled={!output}
-                className="h-7"
-              >
-                <Copy className="h-3 w-3 mr-1" /> Copy
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent className="flex-1 p-0 overflow-hidden">
-            {error ? (
-              <div className="h-full flex items-center justify-center p-3">
-                <div className="text-center p-3 bg-destructive/10 rounded text-xs">
-                  <p className="text-destructive font-semibold">Invalid JSON</p>
-                </div>
+      <ResizablePanelGroup
+        orientation="horizontal"
+        className="flex-1 min-h-0 rounded-lg border"
+      >
+        <ResizablePanel defaultSize={50} minSize={25}>
+          <Card className="flex flex-col overflow-hidden h-full rounded-none border-0">
+            <CardHeader className="py-2 px-3 border-b shrink-0">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm">JSON</CardTitle>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handlePaste}
+                  className="h-7"
+                >
+                  <Upload className="h-3 w-3 mr-1" /> Paste
+                </Button>
               </div>
-            ) : (
+            </CardHeader>
+            <CardContent className="flex-1 p-0 overflow-hidden">
               <Textarea
-                value={output}
-                readOnly
-                className="h-full w-full font-mono text-xs border-0 rounded-none resize-none focus-visible:ring-0 text-blue-400"
-                placeholder="TypeScript interfaces..."
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                className="h-full w-full font-mono text-xs border-0 rounded-none resize-none focus-visible:ring-0"
+                placeholder='{"id": 1, "name": "John"}'
               />
-            )}
-          </CardContent>
-        </Card>
-      </div>
+            </CardContent>
+          </Card>
+        </ResizablePanel>
+
+        <ResizableHandle withHandle />
+
+        <ResizablePanel defaultSize={50} minSize={25}>
+          <Card className="flex flex-col overflow-hidden h-full rounded-none border-0">
+            <CardHeader className="py-2 px-3 border-b shrink-0">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm">TypeScript</CardTitle>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={copyToClipboard}
+                  disabled={!output}
+                  className="h-7"
+                >
+                  <Copy className="h-3 w-3 mr-1" /> Copy
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="flex-1 p-0 overflow-hidden">
+              {error ? (
+                <div className="h-full flex items-center justify-center p-3">
+                  <div className="text-center p-3 bg-destructive/10 rounded text-xs">
+                    <p className="text-destructive font-semibold">Invalid JSON</p>
+                  </div>
+                </div>
+              ) : (
+                <Textarea
+                  value={output}
+                  readOnly
+                  className="h-full w-full font-mono text-xs border-0 rounded-none resize-none focus-visible:ring-0 text-blue-400"
+                  placeholder="TypeScript interfaces..."
+                />
+              )}
+            </CardContent>
+          </Card>
+        </ResizablePanel>
+      </ResizablePanelGroup>
     </div>
   );
 }

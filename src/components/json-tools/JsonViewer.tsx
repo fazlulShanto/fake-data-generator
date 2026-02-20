@@ -3,6 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  ResizablePanelGroup,
+  ResizablePanel,
+  ResizableHandle,
+} from "@/components/ui/resizable";
 import { ChevronRight, ChevronDown, Copy, Upload, Search, ChevronsDownUp, ChevronsUpDown } from "lucide-react";
 
 interface TreeNodeProps {
@@ -167,112 +172,121 @@ export function JsonViewer() {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 h-full">
+    <ResizablePanelGroup
+      orientation="horizontal"
+      className="h-full rounded-lg border"
+    >
       {/* Input */}
-      <Card className="flex flex-col overflow-hidden">
-        <CardHeader className="py-2 px-3 border-b shrink-0">
-          <div className="flex items-center justify-between">
-            <CardTitle className="text-sm">JSON Input</CardTitle>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handlePaste}
-              className="h-7"
-            >
-              <Upload className="h-3 w-3 mr-1" /> Paste
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent className="flex-1 p-0 overflow-hidden">
-          <Textarea
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            className="h-full w-full font-mono text-xs border-0 rounded-none resize-none focus-visible:ring-0"
-            placeholder='{"example": "paste your JSON here"}'
-          />
-        </CardContent>
-      </Card>
+      <ResizablePanel defaultSize={50} minSize={25}>
+        <Card className="flex flex-col overflow-hidden h-full rounded-none border-0">
+          <CardHeader className="py-2 px-3 border-b shrink-0">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-sm">JSON Input</CardTitle>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handlePaste}
+                className="h-7"
+              >
+                <Upload className="h-3 w-3 mr-1" /> Paste
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent className="flex-1 p-0 overflow-hidden">
+            <Textarea
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              className="h-full w-full font-mono text-xs border-0 rounded-none resize-none focus-visible:ring-0"
+              placeholder='{"example": "paste your JSON here"}'
+            />
+          </CardContent>
+        </Card>
+      </ResizablePanel>
+
+      <ResizableHandle withHandle />
 
       {/* Tree View */}
-      <Card className="flex flex-col overflow-hidden">
-        <CardHeader className="py-2 px-3 border-b shrink-0">
-          <div className="flex items-center justify-between gap-2">
-            <CardTitle className="text-sm">Tree View</CardTitle>
-            <div className="flex items-center gap-1">
-              {/* Expand/Collapse All buttons */}
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleExpandAll}
-                disabled={!parsedJson}
-                className="h-7 w-7"
-                title="Expand All"
-              >
-                <ChevronsUpDown className="h-3 w-3" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleCollapseAll}
-                disabled={!parsedJson}
-                className="h-7 w-7"
-                title="Collapse All"
-              >
-                <ChevronsDownUp className="h-3 w-3" />
-              </Button>
-              <div className="w-px h-5 bg-border mx-1" />
-              {/* Search with result count */}
-              <div className="relative">
-                <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
-                <Input
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  placeholder="Search keys & values..."
-                  className={`pl-7 pr-12 h-7 w-44 text-xs ${searchTerm && searchResultCount === 0 ? "border-destructive" : searchTerm && searchResultCount > 0 ? "border-green-500" : ""}`}
-                />
-                {searchTerm && (
-                  <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium px-1.5 py-0.5 rounded ${searchResultCount > 0 ? "bg-green-500/20 text-green-500" : "bg-destructive/20 text-destructive"}`}>
-                    {searchResultCount}
-                  </span>
-                )}
+      <ResizablePanel defaultSize={50} minSize={25}>
+        <Card className="flex flex-col overflow-hidden h-full rounded-none border-0">
+          <CardHeader className="py-2 px-3 border-b shrink-0">
+            <div className="flex items-center justify-between gap-2">
+              <CardTitle className="text-sm">Tree View</CardTitle>
+              <div className="flex items-center gap-1">
+                {/* Expand/Collapse All buttons */}
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleExpandAll}
+                  disabled={!parsedJson}
+                  className="h-7 w-7"
+                  title="Expand All"
+                >
+                  <ChevronsUpDown className="h-3 w-3" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleCollapseAll}
+                  disabled={!parsedJson}
+                  className="h-7 w-7"
+                  title="Collapse All"
+                >
+                  <ChevronsDownUp className="h-3 w-3" />
+                </Button>
+                <div className="w-px h-5 bg-border mx-1" />
+                {/* Search with result count */}
+                <div className="relative">
+                  <Search className="absolute left-2 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
+                  <Input
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Search keys & values..."
+                    className={`pl-7 pr-12 h-7 w-44 text-xs ${searchTerm && searchResultCount === 0 ? "border-destructive" : searchTerm && searchResultCount > 0 ? "border-green-500" : ""}`}
+                  />
+                  {searchTerm && (
+                    <span className={`absolute right-2 top-1/2 -translate-y-1/2 text-[10px] font-medium px-1.5 py-0.5 rounded ${searchResultCount > 0 ? "bg-green-500/20 text-green-500" : "bg-destructive/20 text-destructive"}`}>
+                      {searchResultCount}
+                    </span>
+                  )}
+                </div>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={copyToClipboard}
+                  disabled={!parsedJson}
+                  className="h-7 w-7"
+                  title="Copy JSON"
+                >
+                  <Copy className="h-3 w-3" />
+                </Button>
               </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={copyToClipboard}
-                disabled={!parsedJson}
-                className="h-7 w-7"
-                title="Copy JSON"
-              >
-                <Copy className="h-3 w-3" />
-              </Button>
             </div>
-          </div>
-        </CardHeader>
-        <CardContent className="flex-1 p-2 overflow-auto">
-          {error ? (
-            <div className="text-destructive p-2 bg-destructive/10 rounded text-xs">
-              <p className="font-semibold">Invalid JSON</p>
-              <p className="text-[10px]">{error}</p>
-            </div>
-          ) : parsedJson ? (
-            <div className="p-1 bg-muted/30 rounded">
-              <TreeNode
-                key={expandKey}
-                keyName="root"
-                value={parsedJson}
-                depth={0}
-                searchTerm={searchTerm}
-                expandAll={expandAll}
-              />
-            </div>
-          ) : (
-            <div className="text-muted-foreground text-center py-4 text-xs">
-              Enter JSON to view its structure
-            </div>
-          )}
-        </CardContent>
-      </Card>
-    </div>
+          </CardHeader>
+          <CardContent className="flex-1 p-2 overflow-auto">
+            {error ? (
+              <div className="text-destructive p-2 bg-destructive/10 rounded text-xs">
+                <p className="font-semibold">Invalid JSON</p>
+                <p className="text-[10px]">{error}</p>
+              </div>
+            ) : parsedJson ? (
+              <div className="p-1 bg-muted/30 rounded">
+                <TreeNode
+                  key={expandKey}
+                  keyName="root"
+                  value={parsedJson}
+                  depth={0}
+                  searchTerm={searchTerm}
+                  expandAll={expandAll}
+                />
+              </div>
+            ) : (
+              <div className="text-muted-foreground text-center py-4 text-xs">
+                Enter JSON to view its structure
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </ResizablePanel>
+    </ResizablePanelGroup>
   );
 }

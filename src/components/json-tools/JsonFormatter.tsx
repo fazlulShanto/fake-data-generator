@@ -4,6 +4,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { Slider } from "@/components/ui/slider";
+import {
+  ResizablePanelGroup,
+  ResizablePanel,
+  ResizableHandle,
+} from "@/components/ui/resizable";
 import { Copy, Upload, Minimize2, Maximize2 } from "lucide-react";
 
 type FormatMode = "beautify" | "minify";
@@ -98,71 +103,80 @@ export function JsonFormatter() {
       </div>
 
       {/* Panels */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 flex-1 min-h-0">
+      <ResizablePanelGroup
+        orientation="horizontal"
+        className="flex-1 min-h-0 rounded-lg border"
+      >
         {/* Input */}
-        <Card className="flex flex-col overflow-hidden">
-          <CardHeader className="py-2 px-3 border-b shrink-0">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-sm">Input</CardTitle>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handlePaste}
-                className="h-7"
-              >
-                <Upload className="h-3 w-3 mr-1" /> Paste
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent className="flex-1 p-0 overflow-hidden">
-            <Textarea
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              className="h-full w-full font-mono text-xs border-0 rounded-none resize-none focus-visible:ring-0"
-              placeholder='{"paste": "json here"}'
-            />
-          </CardContent>
-        </Card>
+        <ResizablePanel defaultSize={50} minSize={25}>
+          <Card className="flex flex-col overflow-hidden h-full rounded-none border-0">
+            <CardHeader className="py-2 px-3 border-b shrink-0">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm">Input</CardTitle>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handlePaste}
+                  className="h-7"
+                >
+                  <Upload className="h-3 w-3 mr-1" /> Paste
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="flex-1 p-0 overflow-hidden">
+              <Textarea
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                className="h-full w-full font-mono text-xs border-0 rounded-none resize-none focus-visible:ring-0"
+                placeholder='{"paste": "json here"}'
+              />
+            </CardContent>
+          </Card>
+        </ResizablePanel>
+
+        <ResizableHandle withHandle />
 
         {/* Output */}
-        <Card className="flex flex-col overflow-hidden">
-          <CardHeader className="py-2 px-3 border-b shrink-0">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-sm">
-                {mode === "beautify" ? "Beautified" : "Minified"}
-              </CardTitle>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={copyToClipboard}
-                disabled={!output}
-                className="h-7"
-              >
-                <Copy className="h-3 w-3 mr-1" /> Copy
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent className="flex-1 p-0 overflow-hidden">
-            {error ? (
-              <div className="h-full flex items-center justify-center p-3">
-                <div className="text-center p-3 bg-destructive/10 rounded text-xs">
-                  <p className="text-destructive font-semibold">Invalid JSON</p>
-                  <p className="text-[10px] text-muted-foreground mt-1">
-                    {error}
-                  </p>
-                </div>
+        <ResizablePanel defaultSize={50} minSize={25}>
+          <Card className="flex flex-col overflow-hidden h-full rounded-none border-0">
+            <CardHeader className="py-2 px-3 border-b shrink-0">
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm">
+                  {mode === "beautify" ? "Beautified" : "Minified"}
+                </CardTitle>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={copyToClipboard}
+                  disabled={!output}
+                  className="h-7"
+                >
+                  <Copy className="h-3 w-3 mr-1" /> Copy
+                </Button>
               </div>
-            ) : (
-              <Textarea
-                value={output}
-                readOnly
-                className="h-full w-full font-mono text-xs border-0 rounded-none resize-none focus-visible:ring-0"
-                placeholder="Formatted output..."
-              />
-            )}
-          </CardContent>
-        </Card>
-      </div>
+            </CardHeader>
+            <CardContent className="flex-1 p-0 overflow-hidden">
+              {error ? (
+                <div className="h-full flex items-center justify-center p-3">
+                  <div className="text-center p-3 bg-destructive/10 rounded text-xs">
+                    <p className="text-destructive font-semibold">Invalid JSON</p>
+                    <p className="text-[10px] text-muted-foreground mt-1">
+                      {error}
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <Textarea
+                  value={output}
+                  readOnly
+                  className="h-full w-full font-mono text-xs border-0 rounded-none resize-none focus-visible:ring-0"
+                  placeholder="Formatted output..."
+                />
+              )}
+            </CardContent>
+          </Card>
+        </ResizablePanel>
+      </ResizablePanelGroup>
     </div>
   );
 }

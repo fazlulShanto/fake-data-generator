@@ -1,4 +1,9 @@
 import { useState, useCallback, useEffect } from "react";
+import {
+  ResizablePanelGroup,
+  ResizablePanel,
+  ResizableHandle,
+} from "@/components/ui/resizable";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -882,9 +887,13 @@ export function JsonGenerator() {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 h-full">
+    <ResizablePanelGroup
+      orientation="horizontal"
+      className="h-full rounded-lg border"
+    >
       {/* Schema Builder */}
-      <Card className="flex flex-col overflow-hidden">
+      <ResizablePanel defaultSize={50} minSize={30}>
+        <Card className="flex flex-col overflow-hidden h-full rounded-none border-0">
         <CardHeader className="py-3 px-4 border-b shrink-0 bg-gradient-to-r from-violet-500/5 to-transparent">
           <div className="flex items-center justify-between gap-2 flex-wrap">
             <div className="flex items-center gap-2">
@@ -995,10 +1004,14 @@ export function JsonGenerator() {
             </Button>
           </div>
         </CardContent>
-      </Card>
+        </Card>
+      </ResizablePanel>
+
+      <ResizableHandle withHandle />
 
       {/* Output */}
-      <Card className="flex flex-col overflow-hidden">
+      <ResizablePanel defaultSize={50} minSize={25}>
+        <Card className="flex flex-col overflow-hidden h-full rounded-none border-0">
         <CardHeader className="py-3 px-4 border-b shrink-0 bg-gradient-to-r from-emerald-500/5 to-transparent">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -1046,7 +1059,8 @@ export function JsonGenerator() {
             placeholder="Click Generate to create mock data..."
           />
         </CardContent>
-      </Card>
-    </div>
+        </Card>
+      </ResizablePanel>
+    </ResizablePanelGroup>
   );
 }

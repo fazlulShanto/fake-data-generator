@@ -3,6 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  ResizablePanelGroup,
+  ResizablePanel,
+  ResizableHandle,
+} from "@/components/ui/resizable";
 import Ajv from "ajv";
 import addFormats from "ajv-formats";
 import {
@@ -155,60 +160,7 @@ export function JsonSchemaValidator() {
         </div>
       </div>
 
-      {/* Input Panels */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 flex-1 min-h-0">
-        {/* JSON Data */}
-        <Card className="flex flex-col overflow-hidden">
-          <CardHeader className="py-2 px-3 border-b shrink-0">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-sm">JSON Data</CardTitle>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handlePasteData}
-                className="h-7"
-              >
-                <Upload className="h-3 w-3 mr-1" /> Paste
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent className="flex-1 p-0 overflow-hidden">
-            <Textarea
-              value={jsonData}
-              onChange={(e) => setJsonData(e.target.value)}
-              className="h-full w-full font-mono text-xs border-0 rounded-none resize-none focus-visible:ring-0"
-              placeholder='{"name": "John", "age": 30}'
-            />
-          </CardContent>
-        </Card>
-
-        {/* JSON Schema */}
-        <Card className="flex flex-col overflow-hidden">
-          <CardHeader className="py-2 px-3 border-b shrink-0">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-sm">JSON Schema</CardTitle>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handlePasteSchema}
-                className="h-7"
-              >
-                <Upload className="h-3 w-3 mr-1" /> Paste
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent className="flex-1 p-0 overflow-hidden">
-            <Textarea
-              value={jsonSchema}
-              onChange={(e) => setJsonSchema(e.target.value)}
-              className="h-full w-full font-mono text-xs border-0 rounded-none resize-none focus-visible:ring-0"
-              placeholder='{"type": "object", "properties": {...}}'
-            />
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Result */}
+      {/* Error */}
       {parseError && (
         <Card className="border-destructive shrink-0">
           <CardContent className="py-2 px-3 flex items-center gap-2">
@@ -218,66 +170,129 @@ export function JsonSchemaValidator() {
         </Card>
       )}
 
-      {isValid !== null && (
-        <Card
-          className={`shrink-0 ${isValid ? "border-green-500/50" : "border-destructive/50"}`}
-        >
-          <CardHeader className="py-2 px-3 border-b">
-            <div className="flex items-center gap-2">
-              {isValid ? (
-                <>
-                  <CheckCircle2 className="h-4 w-4 text-green-500" />
-                  <CardTitle className="text-sm text-green-500">
-                    Valid
-                  </CardTitle>
-                  <span className="text-xs text-muted-foreground">
-                    JSON data matches the schema
-                  </span>
-                </>
-              ) : (
-                <>
-                  <XCircle className="h-4 w-4 text-destructive" />
-                  <CardTitle className="text-sm text-destructive">
-                    Invalid
-                  </CardTitle>
-                  <Badge
-                    variant="outline"
-                    className="text-destructive border-destructive text-[10px]"
-                  >
-                    {errors.length} error{errors.length !== 1 ? "s" : ""}
-                  </Badge>
-                </>
-              )}
-            </div>
-          </CardHeader>
-          {!isValid && errors.length > 0 && (
-            <CardContent className="py-2 px-3 max-h-32 overflow-auto">
-              <div className="space-y-1">
-                {errors.map((err, i) => (
-                  <div
-                    key={i}
-                    className="flex items-start gap-2 text-xs p-1.5 bg-destructive/10 rounded"
-                  >
-                    <Badge
-                      variant="outline"
-                      className="shrink-0 text-[10px] font-mono"
+      {/* Vertical split: Editors + Result */}
+      <ResizablePanelGroup
+        orientation="vertical"
+        className="flex-1 min-h-0 rounded-lg border"
+      >
+        {/* Top: Input panels */}
+        <ResizablePanel defaultSize={isValid !== null ? 65 : 100} minSize={30}>
+          <ResizablePanelGroup orientation="horizontal" className="h-full">
+            <ResizablePanel defaultSize={50} minSize={25}>
+              <Card className="flex flex-col overflow-hidden h-full rounded-none border-0">
+                <CardHeader className="py-2 px-3 border-b shrink-0">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-sm">JSON Data</CardTitle>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handlePasteData}
+                      className="h-7"
                     >
-                      {err.path || "/"}
-                    </Badge>
-                    <span className="text-destructive">{err.message}</span>
-                    <Badge
-                      variant="secondary"
-                      className="shrink-0 text-[10px] ml-auto"
-                    >
-                      {err.keyword}
-                    </Badge>
+                      <Upload className="h-3 w-3 mr-1" /> Paste
+                    </Button>
                   </div>
-                ))}
+                </CardHeader>
+                <CardContent className="flex-1 p-0 overflow-hidden">
+                  <Textarea
+                    value={jsonData}
+                    onChange={(e) => setJsonData(e.target.value)}
+                    className="h-full w-full font-mono text-xs border-0 rounded-none resize-none focus-visible:ring-0"
+                    placeholder='{"name": "John", "age": 30}'
+                  />
+                </CardContent>
+              </Card>
+            </ResizablePanel>
+
+            <ResizableHandle withHandle />
+
+            <ResizablePanel defaultSize={50} minSize={25}>
+              <Card className="flex flex-col overflow-hidden h-full rounded-none border-0">
+                <CardHeader className="py-2 px-3 border-b shrink-0">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-sm">JSON Schema</CardTitle>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handlePasteSchema}
+                      className="h-7"
+                    >
+                      <Upload className="h-3 w-3 mr-1" /> Paste
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent className="flex-1 p-0 overflow-hidden">
+                  <Textarea
+                    value={jsonSchema}
+                    onChange={(e) => setJsonSchema(e.target.value)}
+                    className="h-full w-full font-mono text-xs border-0 rounded-none resize-none focus-visible:ring-0"
+                    placeholder='{"type": "object", "properties": {...}}'
+                  />
+                </CardContent>
+              </Card>
+            </ResizablePanel>
+          </ResizablePanelGroup>
+        </ResizablePanel>
+
+        {/* Bottom: Result */}
+        {isValid !== null && (
+          <>
+            <ResizableHandle withHandle />
+            <ResizablePanel defaultSize={35} minSize={15}>
+              <div className="h-full flex flex-col overflow-hidden">
+                <div className="py-2 px-3 border-b shrink-0 bg-card flex items-center gap-2">
+                  {isValid ? (
+                    <>
+                      <CheckCircle2 className="h-4 w-4 text-green-500" />
+                      <span className="text-sm font-semibold text-green-500">Valid</span>
+                      <span className="text-xs text-muted-foreground">
+                        JSON data matches the schema
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <XCircle className="h-4 w-4 text-destructive" />
+                      <span className="text-sm font-semibold text-destructive">Invalid</span>
+                      <Badge
+                        variant="outline"
+                        className="text-destructive border-destructive text-[10px]"
+                      >
+                        {errors.length} error{errors.length !== 1 ? "s" : ""}
+                      </Badge>
+                    </>
+                  )}
+                </div>
+                {!isValid && errors.length > 0 && (
+                  <div className="py-2 px-3 overflow-auto flex-1">
+                    <div className="space-y-1">
+                      {errors.map((err, i) => (
+                        <div
+                          key={i}
+                          className="flex items-start gap-2 text-xs p-1.5 bg-destructive/10 rounded"
+                        >
+                          <Badge
+                            variant="outline"
+                            className="shrink-0 text-[10px] font-mono"
+                          >
+                            {err.path || "/"}
+                          </Badge>
+                          <span className="text-destructive">{err.message}</span>
+                          <Badge
+                            variant="secondary"
+                            className="shrink-0 text-[10px] ml-auto"
+                          >
+                            {err.keyword}
+                          </Badge>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
-            </CardContent>
-          )}
-        </Card>
-      )}
+            </ResizablePanel>
+          </>
+        )}
+      </ResizablePanelGroup>
     </div>
   );
 }

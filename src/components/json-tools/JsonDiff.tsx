@@ -2,6 +2,11 @@ import { useState, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import {
+  ResizablePanelGroup,
+  ResizablePanel,
+  ResizableHandle,
+} from "@/components/ui/resizable";
 import { compareJson, getDiffStats, type DiffResult } from "@/lib/json-diff";
 import { GitCompare, Upload, Plus, Minus, RefreshCw } from "lucide-react";
 
@@ -256,60 +261,7 @@ export function JsonDiff() {
         )}
       </div>
 
-      {/* Panels */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 flex-1 min-h-0">
-        <Card className="flex flex-col overflow-hidden">
-          <CardHeader className="py-2 px-3 border-b shrink-0">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-sm">Original</CardTitle>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handlePasteLeft}
-                className="h-7"
-              >
-                <Upload className="h-3 w-3 mr-1" /> Paste
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent className="flex-1 p-0 overflow-hidden">
-            <CodeEditor
-              value={left}
-              onChange={setLeft}
-              placeholder='{"name": "John"}'
-              highlightLines={leftHighlightLines}
-              highlightColor="bg-red-500/20"
-            />
-          </CardContent>
-        </Card>
-
-        <Card className="flex flex-col overflow-hidden">
-          <CardHeader className="py-2 px-3 border-b shrink-0">
-            <div className="flex items-center justify-between">
-              <CardTitle className="text-sm">Modified</CardTitle>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handlePasteRight}
-                className="h-7"
-              >
-                <Upload className="h-3 w-3 mr-1" /> Paste
-              </Button>
-            </div>
-          </CardHeader>
-          <CardContent className="flex-1 p-0 overflow-hidden">
-            <CodeEditor
-              value={right}
-              onChange={setRight}
-              placeholder='{"name": "Jane"}'
-              highlightLines={rightHighlightLines}
-              highlightColor="bg-green-500/20"
-            />
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Result */}
+      {/* Error */}
       {error && (
         <Card className="border-destructive shrink-0">
           <CardContent className="py-2 px-3">
@@ -318,57 +270,130 @@ export function JsonDiff() {
         </Card>
       )}
 
-      {result && diffsWithLines.length > 0 && (
-        <Card className="shrink-0 max-h-40 overflow-hidden flex flex-col">
-          <CardHeader className="py-1.5 px-3 border-b shrink-0">
-            <CardTitle className="text-xs">
-              Differences (L:Original → R:Modified)
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-1.5 overflow-auto flex-1">
-            <div className="space-y-1">
-              {diffsWithLines.map((diff) => (
-                <div
-                  key={diff.index}
-                  className={`p-1.5 rounded font-mono text-[10px] flex items-start gap-2 ${diff.type === "added" ? "bg-green-500/10" : diff.type === "removed" ? "bg-red-500/10" : "bg-yellow-500/10"}`}
-                >
-                  <span className="shrink-0 w-14 text-muted-foreground font-semibold">
-                    {diff.type === "added" && (
-                      <span className="text-green-500">
-                        →R:{diff.rightLine || "?"}
-                      </span>
-                    )}
-                    {diff.type === "removed" && (
-                      <span className="text-red-500">
-                        L:{diff.leftLine || "?"}→
-                      </span>
-                    )}
-                    {diff.type === "changed" && (
-                      <span className="text-yellow-500">
-                        L:{diff.leftLine || "?"}→R:{diff.rightLine || "?"}
-                      </span>
-                    )}
+      {/* Vertical split: Editors + Differences */}
+      <ResizablePanelGroup
+        orientation="vertical"
+        className="flex-1 min-h-0 rounded-lg border"
+      >
+        {/* Top: Editor panels */}
+        <ResizablePanel defaultSize={result && diffsWithLines.length > 0 ? 65 : 100} minSize={30}>
+          <ResizablePanelGroup orientation="horizontal" className="h-full">
+            <ResizablePanel defaultSize={50} minSize={25}>
+              <Card className="flex flex-col overflow-hidden h-full rounded-none border-0">
+                <CardHeader className="py-2 px-3 border-b shrink-0">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-sm">Original</CardTitle>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handlePasteLeft}
+                      className="h-7"
+                    >
+                      <Upload className="h-3 w-3 mr-1" /> Paste
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent className="flex-1 p-0 overflow-hidden">
+                  <CodeEditor
+                    value={left}
+                    onChange={setLeft}
+                    placeholder='{"name": "John"}'
+                    highlightLines={leftHighlightLines}
+                    highlightColor="bg-red-500/20"
+                  />
+                </CardContent>
+              </Card>
+            </ResizablePanel>
+
+            <ResizableHandle withHandle />
+
+            <ResizablePanel defaultSize={50} minSize={25}>
+              <Card className="flex flex-col overflow-hidden h-full rounded-none border-0">
+                <CardHeader className="py-2 px-3 border-b shrink-0">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="text-sm">Modified</CardTitle>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handlePasteRight}
+                      className="h-7"
+                    >
+                      <Upload className="h-3 w-3 mr-1" /> Paste
+                    </Button>
+                  </div>
+                </CardHeader>
+                <CardContent className="flex-1 p-0 overflow-hidden">
+                  <CodeEditor
+                    value={right}
+                    onChange={setRight}
+                    placeholder='{"name": "Jane"}'
+                    highlightLines={rightHighlightLines}
+                    highlightColor="bg-green-500/20"
+                  />
+                </CardContent>
+              </Card>
+            </ResizablePanel>
+          </ResizablePanelGroup>
+        </ResizablePanel>
+
+        {/* Bottom: Differences */}
+        {result && diffsWithLines.length > 0 && (
+          <>
+            <ResizableHandle withHandle />
+            <ResizablePanel defaultSize={35} minSize={15}>
+              <div className="h-full flex flex-col overflow-hidden">
+                <div className="py-1.5 px-3 border-b shrink-0 bg-card">
+                  <span className="text-xs font-semibold">
+                    Differences (L:Original → R:Modified)
                   </span>
-                  {renderDiffType(diff.type)}
-                  <div className="flex-1 min-w-0">
-                    <span className="text-cyan-400">{diff.path}</span>
-                    {diff.type === "changed" && (
-                      <div className="mt-0.5">
-                        <span className="text-red-400">
-                          -{JSON.stringify(diff.oldValue)}
+                </div>
+                <div className="p-1.5 overflow-auto flex-1">
+                  <div className="space-y-1">
+                    {diffsWithLines.map((diff) => (
+                      <div
+                        key={diff.index}
+                        className={`p-1.5 rounded font-mono text-[10px] flex items-start gap-2 ${diff.type === "added" ? "bg-green-500/10" : diff.type === "removed" ? "bg-red-500/10" : "bg-yellow-500/10"}`}
+                      >
+                        <span className="shrink-0 w-14 text-muted-foreground font-semibold">
+                          {diff.type === "added" && (
+                            <span className="text-green-500">
+                              →R:{diff.rightLine || "?"}
+                            </span>
+                          )}
+                          {diff.type === "removed" && (
+                            <span className="text-red-500">
+                              L:{diff.leftLine || "?"}→
+                            </span>
+                          )}
+                          {diff.type === "changed" && (
+                            <span className="text-yellow-500">
+                              L:{diff.leftLine || "?"}→R:{diff.rightLine || "?"}
+                            </span>
+                          )}
                         </span>
-                        <span className="text-green-400 ml-2">
-                          +{JSON.stringify(diff.newValue)}
-                        </span>
+                        {renderDiffType(diff.type)}
+                        <div className="flex-1 min-w-0">
+                          <span className="text-cyan-400">{diff.path}</span>
+                          {diff.type === "changed" && (
+                            <div className="mt-0.5">
+                              <span className="text-red-400">
+                                -{JSON.stringify(diff.oldValue)}
+                              </span>
+                              <span className="text-green-400 ml-2">
+                                +{JSON.stringify(diff.newValue)}
+                              </span>
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    )}
+                    ))}
                   </div>
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
+              </div>
+            </ResizablePanel>
+          </>
+        )}
+      </ResizablePanelGroup>
     </div>
   );
 }
